@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  password       String
+  
+  // Profile & Anthropometrics
+  gender         String?   // "male", "female", "other"
+  age            Int?
+  weightKg       Float?
+  heightCm       Float?
+  activityLevel  String?   // "sedentary", "light", "moderate", "active", "very_active"
+  goal           String?   // "lose_fat", "maintain", "build_muscle"
+  dietType       String?   // "omnivore", "vegetarian", "vegan", "eggetarian", "jain"
+  regionCuisine  String?   // "South Indian", "North Indian", "Mediterranean", "East Asian", "Continental"
+  city           String?   @default("Hyderabad")
+  latitude       Float?    @default(17.3850)
+  longitude      Float?    @default(78.4867)
+
+  // Daily Nutrition Targets
+  targetCalories Int       @default(2000)
+  targetProtein  Int       @default(120) // in grams
+  targetCarbs    Int       @default(220) // in grams
+  targetFats     Int       @default(65)  // in grams
+  targetWaterMl  Int       @default(2500)// in ml
+
+  // Notification Preferences
+  waterReminders        Boolean @default(true)
+  mealReminders         Boolean @default(true)
+  reminderIntervalHours Int     @default(2)
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  mealLogs       MealLog[]
+  waterLogs      WaterLog[]
+  customFoods    CustomFood[]
+}
+
+model MealLog {
+  id          String   @id @default(cuid())
+  userId      String
+  date        String   // Format: YYYY-MM-DD
+  mealType    String   // "BREAKFAST", "LUNCH", "DINNER", "SNACKS"
+  foodName    String
+  portionSize Float    @default(1.0)
+  portionUnit String   @default("serving")
+  calories    Float
+  protein     Float
+  carbs       Float
+  fats        Float
+  fiber       Float?   @default(0)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+model WaterLog {
+  id        String   @id @default(cuid())
+  userId    String
+  date      String   // Format: YYYY-MM-DD
+  amountMl  Int
+  loggedAt  DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+model FoodItem {
+  id               String   @id @default(cuid())
+  name             String
+  category         String   // "Protein", "Grain", "Dairy", "Vegetables", "Fruits", "Snacks", "Beverages"
+  cuisine          String   // "South Indian", "North Indian", "Mediterranean", "East Asian", "Continental", "Universal"
+  dietType         String   // "vegetarian", "vegan", "eggetarian", "non-veg"
+  climateAttribute String   // "cooling", "warming", "neutral"
+  servingSize      String   // e.g. "1 cup (150g)", "2 pieces", "1 bowl (200g)"
+  calories         Float
+  protein          Float
+  carbs            Float
+  fats             Float
+  fiber            Float    @default(0)
+  recipeNotes      String?  // Quick balancing prep notes (e.g. "Roast with minimal oil; add lemon and black salt")
+  createdAt        DateTime @default(now())
+
+  @@index([cuisine, climateAttribute])
+  @@index([dietType])
+}
+
+model CustomFood {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  servingSize String
+  calories    Float
+  protein     Float
+  carbs       Float
+  fats        Float
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nouri 🥗💧
+> **Intelligent Climate-Aware Nutrition & Hydration Companion**
 
-## Getting Started
+Nouri is a full-stack web application designed to track your daily macronutrient and water intake while proactively solving nutritional deficits. Instead of simply logging what you ate, Nouri evaluates your remaining macronutrient gaps (e.g., *Need 38g protein*) and recommends climate-aligned, regional recipes to balance your day.
 
-First, run the development server:
+---
 
+## 🌟 Key Features
+
+1. **Smart Deficit Balancer ("What Can I Prepare Today?")**
+   - Continuously computes remaining calories, protein, carbohydrates, and fats.
+   - Highlights your primary macro gap (e.g. Protein deficit).
+   - Suggests specific, tailored dishes with preparation notes and 1-click logging directly to Lunch, Dinner, or Snacks.
+
+2. **Climate & Weather Intelligence**
+   - Integrates live temperature, humidity, and condition forecasts via **Open-Meteo**.
+   - **Hot weather**: Dynamically boosts hydration targets (e.g. +300ml to +600ml thermal buffer) and recommends cooling foods (buttermilk, cucumber pachadi, sprouted moong, coconut water).
+   - **Cold/Rainy weather**: Prioritizes warming, gut-supportive foods (ginger broths, millets like bajra/ragi, spiced lentils).
+
+3. **Daily Hydration Station**
+   - Fast 1-tap logging (`+250ml`, `+500ml`, `+750ml`, or custom volume).
+   - Visual progress bar that accounts for baseline hydration + climate thermal buffers.
+   - Native Web Notification API integration to trigger reminders.
+
+4. **Regional Cuisine & Dietary Personalization**
+   - Pre-loaded with regional nutritional profiles: **South Indian**, **North Indian**, **Mediterranean**, **East Asian**, and **Continental**.
+   - Dietary restriction filtering: **Vegetarian**, **Vegan**, **Eggetarian**, and **Non-Veg**.
+   - Profile calculations for BMR and TDEE based on age, gender, height, weight, activity level, and goals (Fat Loss, Maintenance, Muscle Gain).
+
+5. **Meal Logging & Food Library**
+   - Categorized by **Breakfast**, **Lunch**, **Dinner**, and **Snacks**.
+   - Built-in food library search with portion multipliers (0.5x, 1x, 1.5x, 2x).
+   - Custom food entry for quick logging of homemade meals.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 16 (App Router, React 19, TypeScript)
+- **Styling**: Tailwind CSS v4, Lucide React icons
+- **Database & ORM**: Prisma ORM with SQLite (`prisma/dev.db` for zero-setup local development, scalable to PostgreSQL/Supabase)
+- **Auth**: JWT Session tokens with HTTP-only cookies and bcrypt password hashing
+- **Weather API**: Open-Meteo API (free, keyless real-time forecasts)
+- **Alerts**: Web Notifications API
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- Node.js v20+ or v22+
+- npm
+
+### 2. Running Locally
+Navigate to the project folder:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd "C:\Users\krcn3\OneDrive\Documents\Engineering\Projects\Nouri"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Start the development server:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open your browser and visit:
+[http://localhost:3000](http://localhost:3000)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Demo Account
+You can create your own account or click **"1-Click Demo Login"** on the sign-in modal to immediately test all features:
+- **Email**: `demo@nouri.app`
+- **Password**: `Password123!`
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📁 Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+Nouri/
+├── prisma/
+│   ├── schema.prisma       # User, MealLog, WaterLog, FoodItem database models
+│   ├── seed.ts             # Pre-seeded nutritional library with climate attributes
+│   └── dev.db              # SQLite database
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── auth/       # register, login, logout, session routes
+│   │   │   ├── foods/      # food search library API
+│   │   │   ├── meals/      # meal logging & deletion API
+│   │   │   ├── profile/    # health profile & target recalculation API
+│   │   │   ├── recommendations/ # climate & deficit balancer API
+│   │   │   └── water/      # hydration tracking API
+│   │   ├── globals.css     # Tailwind styling
+│   │   ├── layout.tsx      # App shell & metadata
+│   │   └── page.tsx        # Main interactive dashboard
+│   ├── components/
+│   │   ├── AuthModal.tsx   # Sign in & registration dialog
+│   │   ├── DeficitBalancer.tsx # Smart recipe & deficit recommendation card
+│   │   ├── MealList.tsx    # Daily logged meals grouped by time of day
+│   │   ├── MealLoggerModal.tsx # Food search & custom meal logger
+│   │   ├── Navbar.tsx      # Brand, weather snippet, reminder controls
+│   │   ├── NutritionalOverview.tsx # Calorie, protein, carbs, fats cards
+│   │   ├── ProfileModal.tsx # Anthropometrics, diet, cuisine, and goals
+│   │   └── WaterTracker.tsx # Hydration progress & 1-tap logging
+│   └── lib/
+│       ├── auth.ts         # Password hashing & JWT helpers
+│       ├── notifications.ts # Browser Web Notifications
+│       ├── nutrition-calculator.ts # BMR, TDEE, and macro formulas
+│       ├── prisma.ts       # PrismaClient singleton
+│       ├── recommendation-engine.ts # Deficit scoring & balancing algorithm
+│       └── weather.ts      # Open-Meteo real-time climate integration
+└── README.md
+```
