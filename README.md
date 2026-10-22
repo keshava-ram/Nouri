@@ -38,7 +38,7 @@ Nouri is a full-stack web application designed to track your daily macronutrient
 
 - **Framework**: Next.js 16 (App Router, React 19, TypeScript)
 - **Styling**: Tailwind CSS v4, Lucide React icons
-- **Database & ORM**: Prisma ORM with SQLite (`prisma/dev.db` for zero-setup local development, scalable to PostgreSQL/Supabase)
+- **Database & ORM**: Prisma ORM with PostgreSQL (Neon works for free personal deployments)
 - **Auth**: JWT Session tokens with HTTP-only cookies and bcrypt password hashing
 - **Weather API**: Open-Meteo API (free, keyless real-time forecasts)
 - **Alerts**: Web Notifications API
@@ -57,6 +57,13 @@ Navigate to the project folder:
 cd "C:\Users\krcn3\OneDrive\Documents\Engineering\Projects\Nouri"
 ```
 
+Copy `.env.example` to `.env` and add your PostgreSQL connection strings and a private `JWT_SECRET`. Then generate the Prisma client and create the database tables:
+
+```bash
+npx prisma generate
+npx prisma db push
+```
+
 Start the development server:
 ```bash
 npm run dev
@@ -70,6 +77,18 @@ You can create your own account or click **"1-Click Demo Login"** on the sign-in
 - **Email**: `demo@nouri.app`
 - **Password**: `Password123!`
 
+## ☁️ Free Personal Deployment (Vercel + Neon)
+
+This project uses PostgreSQL so its database works on serverless hosting. Create a Neon PostgreSQL project, then import this GitHub repository into Vercel as a Next.js project. In Neon, copy the pooled connection string into `DATABASE_URL` and the direct connection string into `DIRECT_URL`. Set both values in Vercel along with a strong, private `JWT_SECRET`.
+
+Set Vercel's build command to:
+
+```bash
+npx prisma generate && npx prisma db push && npm run build
+```
+
+Deploy the `main` branch. Vercel Hobby is free for personal and non-commercial projects. Neon Free has usage limits and can scale down while idle. Do not upload `.env` or the local SQLite database; the deployed PostgreSQL database starts separately.
+
 ---
 
 ## 📁 Project Structure
@@ -77,9 +96,8 @@ You can create your own account or click **"1-Click Demo Login"** on the sign-in
 ```text
 Nouri/
 ├── prisma/
-│   ├── schema.prisma       # User, MealLog, WaterLog, FoodItem database models
+│   ├── schema.prisma       # PostgreSQL User, MealLog, WaterLog, FoodItem models
 │   ├── seed.ts             # Pre-seeded nutritional library with climate attributes
-│   └── dev.db              # SQLite database
 ├── src/
 │   ├── app/
 │   │   ├── api/
